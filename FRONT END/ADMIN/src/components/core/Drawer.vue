@@ -9,6 +9,7 @@
     persistent
     mobile-break-point="991"
     width="260"
+    class="purple darken-4"
   >
     <v-img
       :src="image"

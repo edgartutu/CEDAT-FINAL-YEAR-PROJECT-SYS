@@ -5,6 +5,7 @@
 			<v-card class="ma-3" v-for="proposal in proposals" :key="proposal.reg_no">
 				<v-card-text class="px-12 my-6">
 					<div class="font-weight-bold">{{proposal.reg_no}}</div>
+					
 					<div class="font-weight-bold">{{proposal.file}}</div>
 				</v-card-text>
 			</v-card>

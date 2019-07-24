@@ -16,10 +16,10 @@
 
         <material-card 
         >
-          <v-btn
-            color="green darken-3"
-            dark
-            class="mb-2" >Excel</v-btn>
+          <export-excel :data="items">
+            <div class="green--text">Export to Excel</div>
+            <img src="@/assets/img/512.png" style="width:40px;height:40px">
+          </export-excel>
             <v-layout column style="height: 100vh">       
             <v-flex  style="overflow: auto">   
           <v-data-table

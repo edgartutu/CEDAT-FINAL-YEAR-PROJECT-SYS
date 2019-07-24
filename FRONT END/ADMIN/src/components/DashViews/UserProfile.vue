@@ -44,7 +44,12 @@
                     <div>{{proposal.status}}</div>
                     <p></p>
                     <v-text-field label="Supervisor" placeholder="Supervisor" v-model="supervisor"></v-text-field>
-                    <v-text-field label="Email" placeholder="Emain" v-model="email"></v-text-field>
+                     <v-autocomplete
+                        label="Email"
+                        v-model="email"
+                        v-for="item in components" :key="item.email"
+                         :items="item.email"     
+                      >{{item.email}}</v-autocomplete>
                     <v-text-field label="Comment" placeholder="Comment" v-model="comment"></v-text-field>
                     <v-btn class="green" @click="approve(index)">Approve</v-btn><v-spacer></v-spacer>
                     <v-btn class="red" @click="rejected(index)">Reject</v-btn>
@@ -75,6 +80,9 @@ import axios from 'axios'
                 comment: "",
                 pending: null,
                 link: null,
+                components:[
+                  
+                ]
 
             }
         },
@@ -84,6 +92,11 @@ import axios from 'axios'
             this.rejected();
             // this.intervalFetchData();
            
+        },
+        created(){
+           axios.get("http://127.0.0.1:5000/allguest").then(response => {
+                this.components = response.data })
+
         },
         methods: {
           propsal(){
@@ -102,11 +115,19 @@ import axios from 'axios'
                     "comment": this.comment, "status": "Rejected"
                 }).then(window.location.reload())
             },
+            forceFileDownload(response){
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+             const link = document.createElement('a')
+             link.href = url
+             link.setAttribute('download', 'file.pdf') //or any other extension
+             document.body.appendChild(link)
+            link.click()
+    },
             pendingfiles(index) {
                 axios.post("http://127.0.0.1:5000/pendingfiles", {
                     "reg_no": this.proposals[index].reg_no
                 }).then(response => {
-                    console.log(response.data)
+        this.forceFileDownload(response)
                 })
 
             },

@@ -11,6 +11,7 @@
         md12
         lg12
       >
+     
         <material-card
           title="All Projects"
           color="green darken-4">
@@ -26,8 +27,8 @@
        
            <note/>
       </v-flex>
-      <v-spacer></v-spacer>
       
+      <v-spacer></v-spacer>
      <v-flex
        md4
         lg6
@@ -35,7 +36,8 @@
         <material-card  class="rounded-card"
           color="deep-orange darken-1"
           title="New Projects"
-          popout  
+          
+           
         >
         <v-flex>
            <typo/>
@@ -49,7 +51,9 @@
       >
         <material-card
           title="Approved Projects"
-          color="teal darken-1">
+          color="teal darken-1"
+           
+           class="style:fixed" >
 
           <simple/>
         </material-card>

@@ -15,11 +15,10 @@
 
         <material-card 
         >
-          <v-btn
-            @click="exportdb()"
-            color="red"
-            dark
-            class="mb-2" >Export To Excel</v-btn>
+          <export-excel :data="items">
+            <div class="green--text">Export to Excel</div>
+            <img src="@/assets/img/512.png" style="width:40px;height:40px">
+          </export-excel>
             <v-layout column style="height: 50vh">       
             <v-flex md12 style="overflow: auto">   
           <v-data-table
@@ -119,10 +118,18 @@ export default {
                     console.log(response)
                 })
             },
+             forceFileDownload(response){
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+             const link = document.createElement('a')
+             link.href = url
+             link.setAttribute('download', 'file.pdf') //or any other extension
+             document.body.appendChild(link)
+            link.click()
+    },
             download(index) {
                 this.reg_no = this.items[index].reg_no
                 axios.post("http://127.0.0.1:5000/pendingfiles", {'reg_no':this.reg_no}).then(response => {
-                    console.log(this.reg_no)
+        this.forceFileDownload(response)
                 })
             }
         }

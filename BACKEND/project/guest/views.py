@@ -174,7 +174,7 @@ class Reports(Resource):
 ##    @token_required
     def post(current_user):
         data = request.get_json()
-        reports = Progress_report.query.filter_by(email=data['email'])
+        reports = Progress_report.query.filter_by(supervisor_email=data['email'])
         return [x.json() for x in reports]
 
 class pendingfiles2(Resource):

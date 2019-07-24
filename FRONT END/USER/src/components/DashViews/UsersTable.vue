@@ -9,7 +9,7 @@
                     <v-text-field label="Title" placeholder="Title" v-model="title"></v-text-field>
                     <v-text-field label="Problem Statment" placeholder="Problem Statment" v-model="problem_statment"></v-text-field>
                     <v-text-field label="Methodology" placeholder="Methodology" v-model="methodology"></v-text-field>
-                    <input type="file" name="Upload File" @change="uploadfile" />
+                    <input type="file" name="Upload File" accept=".pdf" @change="uploadfile" />
                     <v-btn flat class="green my-5" @click="postproposal()">Submit</v-btn>
 
                 </v-card-text>

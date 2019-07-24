@@ -19,7 +19,7 @@
 				</v-flex>
 				<v-flex xs12 sm4 text-xs-center>
                     <v-text-field label="Comment" placeholder="comment" v-model="comment"></v-text-field>
-                    <input type="file" name="Upload File" @change="uploadfile" />
+                    <input type="file" name="Upload File"  @change="uploadfile" />
 				
 					<v-btn flat class="teal" @click="submit()">Submit</v-btn>
 					</v-flex><br>

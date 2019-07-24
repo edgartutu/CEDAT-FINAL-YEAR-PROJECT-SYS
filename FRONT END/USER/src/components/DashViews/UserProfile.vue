@@ -29,8 +29,8 @@
               <div>{{proposal.title}}</div>
               <h4 class="font-weight-bold">problem statment</h4>
               <div>{{proposal.problem_statement}}</div>
-              <h4 class="font-weight-bold">abstract</h4>
-              <div>{{proposal.abstract}}</div>
+              <h4 class="font-weight-bold">Methodology</h4>
+              <div>{{proposal.methodology}}</div>
                <h4 class="font-weight-bold">file</h4>
               <div>{{proposal.proposal_uploadfile}}</div>
               <h4 class="font-weight-bold">Supervisor</h4>

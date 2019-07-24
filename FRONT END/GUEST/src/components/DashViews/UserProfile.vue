@@ -75,15 +75,24 @@ export default {
                 
             })
     },
+     
         methods: {
             pendingfiles(index) {
                 axios.post("http://127.0.0.1:5000/pendingfiles2", {
                     "reg_no": this.proposals[index].reg_no
-                }).then(response => {
-                    console.log(response)
+                  }).then(response => {
+                 this.forceFileDownload(response)
                 })
 
-            }
+            },
+            forceFileDownload(response){
+            const url = window.URL.createObjectURL(new Blob([response.data]))
+             const link = document.createElement('a')
+             link.href = url
+             link.setAttribute('download', 'file.pdf','file.docx') //or any other extension
+             document.body.appendChild(link)
+            link.click()
+    },
         }
      
     
