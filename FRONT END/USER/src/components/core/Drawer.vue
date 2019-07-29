@@ -7,6 +7,8 @@
     hide-overlay
     stateless
     class="teal darken-2"
+    mobile-break-point="991"
+    width="260"
   >
     <v-toolbar flat class="teal darken-2">
       <v-list class="pa-0">

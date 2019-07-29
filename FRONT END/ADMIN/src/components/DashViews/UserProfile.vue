@@ -131,14 +131,7 @@ import axios from 'axios'
                 })
 
             },
-        //     intervalFetchData: function () {
-        //     setInterval(() => {    
-        //         this.propsal();
-        //         this. approve();
-        //         this.rejected();
-
-        //         }, 1000);    
-        // }
+       
           
         }
      
