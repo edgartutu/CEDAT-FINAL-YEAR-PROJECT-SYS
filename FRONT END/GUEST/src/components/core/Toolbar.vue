@@ -44,13 +44,7 @@
 			
 
 			<v-flex align-center layout py-2>
-				<v-text-field
-					v-if="responsiveInput"
-					class="mr-4 mt-2 purple-input"
-					label="Search..."
-					hide-details
-					color="purple"
-				/>
+			
 				
 				<v-menu bottom left content-class offset-y transition="slide-y-transition">
 					<router-link
@@ -115,6 +109,11 @@
         to: '/dashboard/rejected',
      
         text: 'Progress Report'
+      },
+			 {
+        to: '/dashboard/reviews',
+     
+        text: 'Proposals to Review'
       },
       
 	],

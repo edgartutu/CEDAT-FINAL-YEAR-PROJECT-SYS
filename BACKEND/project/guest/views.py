@@ -5,7 +5,7 @@ from flask import flash, redirect, render_template, request, url_for,make_respon
 from flask_login import login_user,login_required, logout_user
 from .forms import LoginForm
 from project.models import User
-from project import db, login_manager
+from project import db, login_manager,mail
 import functools
 from flask_login import login_user,login_required,logout_user
 import logging
@@ -18,6 +18,7 @@ import jwt
 from functools import wraps
 import datetime
 from flask import send_file, send_from_directory, safe_join, abort
+from flask_mail import Message
 
 
 api = Api(app)
@@ -38,34 +39,7 @@ def token_required(f):
         return f(current_user,*args,**kwargs)   
     return decorated
 
-##class Login(Resource):
-##    @staticmethod
-##    @login_required
-##    def post():
-##        error=None
-##        form = LoginForm(request.form)
-##        try:
-##            email, password = request.json.get('email').strip(), request.json.get('password').strip()
-##            print(email , password)
-##        except Exception as why:
-##            logging.info("reg_no or password is wrong. " + str(why))
-##            flash ('status: invalid input.')
-##        if email is None or password is None:
-##            flash ('status: user information is none.') 
-##        
-##        if request.method =='POST':
-##            if form.validate_on_submit():
-##                guest = Guest.query.filter_by(email=email, password=password).first()
-##                if guest is None:
-##                    flash ('status: user doesnt exist.')
-##                elif guest is not None and check_password_hash(
-##                    user.password, request.form['password']):
-##                    login_user(guest)
-##                    flash('You were logged in.')
-####                    return redirect(url_for())
-##                else:
-##                    error = 'Invalid email or password'
-##        return render_template('login.html',form=form,error=error)
+
 class RegisterGuest(Resource):
     def post(self):
         data=request.get_json()
@@ -148,9 +122,6 @@ class PostProject_(Resource):
 ##                flash('File Uploaded')
 
 
-        
-
-
 class AssignedProposal(Resource):
 ##    @token_required
 ##    @staticmethod  
@@ -194,6 +165,35 @@ class pendingfiles2(Resource):
 
         except FileNotFoundError:
             abort(404)
+
+class Toreview(Resource):
+    def post(current_user):
+        data=request.get_json()
+        review=Proposal.query.filter_by(review_supervisor=data['email'])
+        return [x.json() for x in review]
+
+
+class Tocomment(Resource):
+    def post(current_user):
+        data=request.get_json()
+        review=Proposal.query.filter_by(reg_no=data['reg_no']).first()
+        review.review_comment=data['comment']
+        db.session.commit()
+
+        try:
+        
+            mess=Admin.query.all()
+        
+            for mes in mess:
+                message = 'Proposal reviewed by '+str(review.supervisor)+'\n'+'comments made: \n'+str(data['comment'])
+                subject = 'Proposal Reviews: NO REPLY'
+                sender = 'fypmailing@gmail.com'
+                msg = Message(sender=sender,recipients=[mes.email],body=message,subject=subject)
+                mail.send(msg)
+
+        except Exception:
+            return {'error':'mail not sent'}
+ 
 
 
 

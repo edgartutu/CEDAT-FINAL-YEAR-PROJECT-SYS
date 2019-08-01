@@ -13,8 +13,9 @@
           <td class="datatable-cell-wrapper"><div>{{ props.item.reg_no }}</div></td>
           <td class="datatable-cell-wrapper"><div>{{ props.item.title }}</div></td>
           <td class="datatable-cell-wrapper"><div>{{ props.item.status}}</div></td>
-          <td class="datatable-cell-wrapper"><div>{{ props.item.proposal_uploadfile }}</div></td>
-          <td class="datatable-cell-wrapper">{{ props.item.student_pair }}</td>
+          <!-- <td class="datatable-cell-wrapper"><div>{{ props.item.proposal_uploadfile }}</div></td> -->
+          <td class="datatable-cell-wrapper">{{ props.item.student1 }}</td>
+           <td class="datatable-cell-wrapper">{{ props.item.student2 }}</td>
           <td class="datatable-cell-wrapper">{{ props.item.supervisor }}</td>
           <td class="datatable-cell-wrapper">{{ props.item.email }}</td>
           <v-dialog
@@ -158,10 +159,14 @@ import user from './UserProfile.vue'
        
          { text: 'Reg_no', value: 'reg_no' },
         { text: 'Title', value: 'title' },
-        { text: 'Student', value: 'student_pair' }, 
-        { text: 'Supervisor', value: 'supervisor' }, 
-        { text: 'file', value: 'proposal_uploadfile' },
-       { text: 'Status', value: 'status' },
+        { text: 'Status', value: 'status' },
+       
+         
+        // { text: 'file', value: 'proposal_uploadfile' },
+         { text: 'Student-1', value: 'student1' }, 
+         { text: 'Student-2', value: 'student2' },
+         { text: 'Supervisor', value: 'supervisor' },
+       
     
       
       ],

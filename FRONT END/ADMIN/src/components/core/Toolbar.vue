@@ -11,14 +11,49 @@
 
 		<v-spacer/>
 		<v-toolbar-items>
-			<v-flex align-center layout py-2>
-				<v-text-field
-					v-if="responsiveInput"
-					class="mr-4 mt-2 purple-input"
-					label="Search..."
-					hide-details
-					color="purple"
-				/>
+			<v-flex xs12 layout py-2 >
+			<v-autocomplete
+			
+              v-model="friends"
+              :disabled="isUpdating"
+              :items="people"
+              filled
+              chips
+              color="blue-grey lighten-2"
+              label="Select"
+              item-text="name"
+              item-value="name"
+              multiple
+            >
+              <template v-slot:selection="data">
+                <v-chip
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                  close
+                  @click="data.select"
+                  @click:close="remove(data.item)"
+                >
+                  <v-avatar left>
+                    <v-img :src="data.item.avatar"></v-img>
+                  </v-avatar>
+                  {{ data.item.name }}
+                </v-chip>
+              </template>
+              <template v-slot:item="data">
+                <template v-if="typeof data.item !== 'object'">
+                  <v-list-item-content v-text="data.item"></v-list-item-content>
+                </template>
+                <template v-else>
+                  <v-list-item-avatar>
+                    <img :src="data.item.avatar">
+                  </v-list-item-avatar>
+                  <v-list-item-content>
+                    <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                    <v-list-item-subtitle v-html="data.item.group"></v-list-item-subtitle>
+                  </v-list-item-content>
+                </template>
+              </template>
+            </v-autocomplete>
 				<router-link v-ripple class="toolbar-items" to="/">
 					<v-icon color>mdi-home</v-icon>
 				</router-link>

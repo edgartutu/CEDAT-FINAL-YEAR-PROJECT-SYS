@@ -1,11 +1,11 @@
 from project import app, db
-from project.models import User, Admin,Progress_comment,Progress_report, Proposal,Previous_topic,Department,Project,Rejected_Proposal
+from project.models import User, Admin,Progress_comment,Progress_report, Proposal,Previous_topic,Department,Project,Rejected_Proposal,Partner_table
 from flask_restful import Resource, Api
 from flask import flash, redirect, render_template, request, url_for,make_response
 from flask_login import login_user,login_required, logout_user
 from .forms import LoginForm,RegisterForm,Proposal_submittion_Form
 from project.models import User
-from project import db, login_manager
+from project import db, login_manager,mail
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash,check_password_hash
 import os
@@ -19,6 +19,7 @@ from werkzeug.security import generate_password_hash,check_password_hash
 import jwt
 from functools import wraps
 import datetime
+from flask_mail import Message
 
 api = Api(app)
 
@@ -46,14 +47,11 @@ class Register(Resource):
         '''Generating public ID'''
         publicID = str(uuid.uuid4())
         data = request.get_json()
+        
         student1 = data['student1']
-        student2 = data['student2']
         reg_no = data['reg_no']
-        reg_no2 = data['reg_no2']
         email = data['email']
-        email2 = data['email2']
         tel = data['tel']
-        tel2 = data['tel2']
         course = data['course']
         password = data['password']
         confirm_password = data['confirm_password']
@@ -68,11 +66,14 @@ class Register(Resource):
         if reg_no is None or password is None :
             return {'error':'error'}
 
-        if password==confirm_password:   
-            user = User(student1=student1,student2=student2,reg_no=reg_no,reg_no2=reg_no2,email=email,tel=tel,
-                        email2=email2,tel2=tel2,password_hash=password,course=course)
+        if password==confirm_password:
+            
+            user = User(student1=student1,reg_no=reg_no,email=email,tel=tel,
+                        password_hash=password,course=course)
+            
             db.session.add(user)
             db.session.commit()
+            return data
                 #flash('status registration completed.')
         else:
             return {'error':'Could not creat account'}
@@ -130,42 +131,109 @@ class PostProposals(Resource):
     def post(current_user):
 
         data = request.form
+        
         reg_nox = data['reg_nox']
         title = data['title']
         #reg_no = data['reg_no']
         proposal_ref = data['proposal_ref']
         problem_statement = data['problem_statement']
         methodology = data['methodology']
-        #reg_no2 = data['reg_no2']
-        #student1 = data['student1']
-        #student2 = data['student2']
-        file = request.files['file']
-        filename = secure_filename(file.filename)
-        fileExt = filename.split('.')[1]
-        autoGenFileName = uuid.uuid4()
-        newFilename = str(autoGenFileName)+'.'+fileExt
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'],newFilename))
+        try:
+            user = User.query.filter_by(reg_no=reg_nox).first()
+            reg_no = user.reg_no
+            student1 = user.student1
+            try:
+                
+                if Partner_table.query.filter_by(reg_no=reg_no).first() != None:
+                    partner = Partner_table.query.filter_by(reg_no=reg_no).first()
+                    status = partner.status1
+                    if status == 'Accepted':
+                        if partner.reg_no == data['reg_nox']:
+                            reg_no2 = partner.reg_no2
+                        else:
+                            reg_no2 = partner.reg_no
 
-        user = User.query.filter_by(reg_no=reg_nox).first()
-        reg_no = user.reg_no
-        reg_no2 = user.reg_no2
-        student1 = user.student1
-        student2 = user.student2
+                        partner2 = User.query.filter_by(reg_no=reg_no2).first()
+                        student2 = partner2.student1
 
-        status = 'pending'
-        supervisor = 'None'
-        email = 'None'
-        comment = 'None'
-        id = ''
+                    else:
+                        pass
 
-        p_upload = Proposal(id=id,title=title,reg_no=reg_no,project_ref=proposal_ref,problem_statement=problem_statement,
-                            methodology=methodology ,reg_no2=reg_no2,proposal_uploadfile=newFilename,
-                            status=status,supervisor=supervisor,email=email,
-                            comment=comment,student1=student1,student2=student2)
+                else:
+                    
+                    partner = Partner_table.query.filter_by(reg_no2=reg_no).first()
+                    status = partner.status1
+                    
+                    if status == 'Accepted':
+                        if partner.reg_no2 == data['reg_nox']:
+                            reg_no2 = partner.reg_no
+                            
+                        else:
+                            reg_no2 = partner.reg_no2
+                        partner2 = User.query.filter_by(reg_no=reg_no2).first()
+                        
+                        student2 = partner2.student1
+                        
 
-        db.session.add(p_upload)
-        db.session.commit()
-        return data
+                    else:
+                        pass
+                    
+
+            except Exception:
+                reg_no2 = ""
+                student2 = ""
+            
+            file = request.files['file']
+            
+            filename = secure_filename(file.filename)
+            fileExt = filename.split('.')[1]
+            autoGenFileName = student1+'_'+student2+str(datetime.datetime.today().strftime("%d-%m-%Y"))
+            newFilename = str(autoGenFileName)+'.'+fileExt
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'],newFilename))
+
+            
+
+            status = 'pending'
+            supervisor = 'None'
+            email = 'None'
+            comment = 'None'
+            cosupervisor = ''
+            extsupervisor =''
+            review_supervisor = ''
+            review_comment = ''
+            
+            id = ''
+            
+
+            p_upload = Proposal(id=id,title=title,reg_no=reg_no,project_ref=proposal_ref,problem_statement=problem_statement,
+                                methodology=methodology ,reg_no2=reg_no2,proposal_uploadfile=newFilename,
+                                status=status,supervisor=supervisor,email=email,
+                                comment=comment,student1=student1,student2=student2,cosupervisor=cosupervisor,extsupervisor=extsupervisor,
+                                review_supervisor=review_supervisor,review_comment=review_comment)
+
+            
+            db.session.add(p_upload)
+            db.session.commit()
+            
+
+            try:
+                mess=Admin.query.all()
+            
+                for mes in mess:
+                    message = 'Proposal Submitted by '+student1+' and '+student2+' on ' + str(datetime.datetime.today())
+                    subject = 'Proposal Submitted: NO REPLY'
+                    sender = 'fypmailing@gmail.com'
+                    msg = Message(sender=sender,recipients=[mes.email],body=message,subject=subject)
+        ##            with app.open_resource(os.path.join(app.config['UPLOAD_FOLDER'],newFilename)) as fp:
+        ##                msg.attach(fp,fp.read())
+                    mail.send(msg)
+
+            except Exception:
+                return {'error':'mail not sent'}
+        except Exception:
+            return {'status':'Posting proposal failed'}
+                
+        
 
     def delete(current_user):
         data = request.get_json()
@@ -190,14 +258,20 @@ class ViewPrjects(Resource):
 ##    @staticmethod
     def post(current_user):
         data = request.get_json()
-####        data = {"reg_no":"1234"}
-        error = None
-        project = Proposal.query.filter_by(reg_no=str(data['reg_no']))
-####        rejected = Rejected_Proposal.query.filter_by(reg_no=data['reg_no']).first()
-        return [x.json() for x in project]
-#        for y in rejected:
-#            return y.json(),project
-                
+        #error = None
+        
+        try:
+            project = Proposal.query.filter_by(reg_no=str(data['reg_no']))
+            
+            if [x.json() for x in project] != []:
+                return [x.json() for x in project]
+
+            else:
+                project2 = Proposal.query.filter_by(reg_no2=str(data['reg_no']))
+                return [x.json() for x in project2]
+
+        except Exception:
+            return {'Error':'No recodes available'}
                         
 class ViewProposals(Resource):
     #@token_required
@@ -221,20 +295,47 @@ class PostProgressReport(Resource):
         filename = secure_filename(file.filename)
         
         fileExt = filename.split('.')[1]
-        autoGenFileName = uuid.uuid4()
+        autoGenFileName = student1+'_'+student2+str(datetime.datetime.today().strftime("%d-%m-%Y"))
 
         newFilename = str(autoGenFileName)+'.'+fileExt
 
         file.save(os.path.join(app.config['UPLOAD_FOLDER'],newFilename))
         
-        supervisor = Proposal.query.filter_by(reg_no=reg_no1).first()
-        s_email = supervisor.email
+        try:
+            if Proposal.query.filter_by(reg_no=reg_no1).first() is not None:
+                supervisor = Proposal.query.filter_by(reg_no=reg_no1).first()
+                s_email = supervisor.email
 
-        progress = Progress_report(reg_no=reg_no1,files=newFilename,supervisor_email=s_email,datestamp=datestamp,comment=comment)
-        db.session.add(progress)
-        db.session.commit()
+                progress = Progress_report(reg_no=reg_no1,files=newFilename,supervisor_email=s_email,datestamp=datestamp,comment=comment)
+                db.session.add(progress)
+                db.session.commit()
 
-        return data
+                return data
+            else:
+                supervisor2 = Proposal.query.filter_by(reg_no2=reg_no1).first()
+                s_email = supervisor2.email
+
+                progress = Progress_report(reg_no=reg_no1,files=newFilename,supervisor_email=s_email,datestamp=datestamp,comment=comment)
+                db.session.add(progress)
+                db.session.commit()
+
+                return data
+
+            try:
+        
+        
+                message = 'Progress Report Submitted by '+student1+' and '+student2+' on ' + str(datetime.datetime.today())
+                subject = 'Progress Report Submitted: NO REPLY'
+                sender = 'fypmailing@gmail.com'
+                msg = Message(sender=sender,recipients=[s_email],body=message,subject=subject)
+                mail.send(msg)
+
+            except Exception:
+                return {'error':'mail not sent'}
+
+        except Exception:
+            return {'error':'submission failed'}
+                
 
 class Previous_topics_by_title(Resource):
     #@token_required
@@ -264,13 +365,7 @@ class UpdateMethodology(Resource):
         update = Proposal.query.filter_by(reg_no=data['reg_no']).first()
         update.methodology = data['methodology']
         db.session.commit()
-#        try:
-#            return update.json()
 
-#        except Exception:
-#            return "Error, Operation unsuccessful"
-
-# add routes
 class resubmitfiles(Resource):
 #    @token_required
     def post(current_user):
@@ -281,7 +376,7 @@ class resubmitfiles(Resource):
         filename = secure_filename(file.filename)
         
         fileExt = filename.split('.')[1]
-        autoGenFileName = uuid.uuid4()
+        autoGenFileName = student1+'_'+student2+str(datetime.datetime.today().strftime("%d-%m-%Y"))
 
         newFilename = str(autoGenFileName)+'.'+fileExt
 
@@ -306,6 +401,124 @@ class deleteprogressreport(Resource):
         update = Progress_report.query.filter_by(datestamp=data['datestamp']).first()
         db.session.delete(update)
         db.session.commit()
+
+class addpartner(Resource):
+#    @token_required
+    def post(current_user):
+        data = request.get_json()
+        
+        if Partner_table.query.filter_by(reg_no=data['reg_no']).first() is not None:
+            return {'Error':'Student pair already exist'}
+
+        else:
+            
+            if Partner_table.query.filter_by(reg_no2=data['reg_no']).first() is not None:
+                return {'Error':'Student pair already exist'}
+
+            else:
+                
+                if Partner_table.query.filter_by(reg_no=data['reg_no2']).first() is not None:
+                    return {'Error':'Student pair already exist'}
+
+                else:
+                    if Partner_table.query.filter_by(reg_no2=data['reg_no2']).first() is not None:
+                        return {'Error':'Student pair already exist'}
+
+                    else:
+                        reg_no = data['reg_no']
+                        reg_no2 = data['reg_no2']
+                        status ="pending"
+                        partner = Partner_table(reg_no=reg_no,reg_no2=reg_no2,status1=status)
+                        db.session.add(partner)
+                        db.session.commit()
+                        return data
+
+class viewpartnerequest(Resource):
+#    @token_required
+    def post(current_user):
+        data = request.get_json()
+        try:
+            if Partner_table.query.filter_by(reg_no2=data['reg_no']).first() is not None:
+                partner  = Partner_table.query.filter_by(reg_no2=data['reg_no']).first()
+                return partner.json()
+            else:
+                partner  = Partner_table.query.filter_by(reg_no=data['reg_no']).first()
+                return partner.json()
+
+        except Exception:
+            return {'error':'No student exist'}
+
+class confirmreguest(Resource):
+#    @token_required
+    def post(current_user):
+        data = request.get_json()
+        
+        response = data['response']
+        try:
+            partner  = Partner_table.query.filter_by(reg_no2=data['reg_no']).first()
+        
+            reg_no1 = partner.reg_no
+            partner2 = User.query.filter_by(reg_no=reg_no1).first()
+
+            if response == 'accept':
+                partner.status1 = 'Accepted'
+                db.session.commit()
+                
+                try:
+                    
+                    message = 'Final year project partner request accepted'
+                    subject = 'Request Accepted: NO REPLY'
+                    sender = 'fypmailing@gmail.com'
+                    
+                    msg = Message(sender=sender,recipients=[partner2.email],body=message,subject=subject)
+                    
+                    mail.send(msg)
+                   
+                    
+                    
+
+                except Exception:
+                    return {'error':'mail not sent'}
+
+            elif response == 'reject':
+                db.session.delete(partner)
+                db.session.commit()
+                
+                try:
+                    
+                    message = 'Your request for a project partner has been rejected'
+                    subject = 'Request Rejected: NO REPLY'
+                    sender = 'fypmailing@gmail.com'
+                    msg = Message(sender=sender,recipients=[partner2.email],body=message,subject=subject)
+                    mail.send(msg)
+
+                except Exception:
+                    return {'error':'mail not sent'}
+            else:
+                return{"eror":"request failed"}
+            
+        except Exception:
+            return {'error':'Only the second student can confirm'}
+            
+        
+
+class viewpartner(Resource):
+    #@token_required
+    def get(current_user):
+        data = request.get_json()
+        try:
+            if Partner_table.query.filter_by(reg_no=data['reg_no']).first() is not None:
+                topic = Partner_table.query.filter_by(reg_no=data['reg_no']).first()
+                return topic.json()
+
+            else:
+                topic = Partner_table.query.filter_by(reg_no2=data['reg_no']).first()
+                return topic.json()
+        
+        except Exception:
+            return {'title':'No data available'}
+
+
 
 
 

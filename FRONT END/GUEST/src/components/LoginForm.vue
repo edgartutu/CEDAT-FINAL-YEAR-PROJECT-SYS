@@ -46,7 +46,7 @@
                   @keydown.enter="login"
                   @click:append="showPassword = !showPassword" />
         <a href="#">Forgot your password?</a>
-        <button  @click="login">Sign Up</button>
+        <button  @click="login">Sign in</button>
         <v-snackbar
               v-model="snackbar"
               :color="color"
@@ -108,7 +108,7 @@ import axios from 'axios'
         )
     },
      register(){
-    axios.post('http://127.0.0.1:5000/register-guest',{"email":this.email,"name":this.email,"password_hash":this.password_hash,"confirm_password_hash":this.confirm_password_hash})
+    axios.post('http://127.0.0.1:5000/register-guest',{"email":this.email,"name":this.name,"password_hash":this.password_hash,"confirm_password_hash":this.confirm_password_hash})
 
   },
   },

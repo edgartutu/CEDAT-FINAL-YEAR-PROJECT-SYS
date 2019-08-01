@@ -35,6 +35,10 @@
               <div>{{proposal.proposal_uploadfile}}</div>
               <h4 class="font-weight-bold">Supervisor</h4>
               <div>{{proposal.supervisor}}</div>
+              <h4 class="font-weight-bold">Co Supervisor</h4>
+              <div>{{proposal.cosupervisor}}</div>
+              <h4 class="font-weight-bold">Field Supervisor</h4>
+              <div>{{proposal.extsupervisor}}</div>
               <h4 class="font-weight-bold">Comments</h4>
               <div>{{proposal.commet}}</div>
 
@@ -70,6 +74,7 @@
             this.reg_no = localStorage.getItem('user')
             axios.post('http://127.0.0.1:5000/viewprojects2',
                 { reg_no: this.reg_no }).then(response => {
+                  console.log(response);
                 this.proposals = response.data
             })
 

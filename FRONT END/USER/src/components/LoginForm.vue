@@ -23,10 +23,6 @@
           <input type="text" placeholder="Student1 Reg n0" v-model="reg_no" />
           <input type="email" placeholder="Email-1" v-model="email" />
           <input type="text" placeholder="Tel1" v-model="tel" />
-          <input type="text" placeholder="Student2 Name" v-model="student2" />
-          <input type="text" placeholder="Student2 Reg n0" v-model="reg_no2" />
-          <input type="email" placeholder="Email-1" v-model="email2" />
-          <input type="text" placeholder="Tel2" v-model="tel2" />
           <input type="text" placeholder="Course: E for BELE T for BSTE and C for BSCE" v-model="course" />
           <input type="password" placeholder="Password" v-model="password_hash" />
           <input type="password" placeholder="Confirm Password" v-model="confirm" />
@@ -121,9 +117,10 @@ import reset from './DashViews/ResetPass.vue'
      },
      register() {
          axios.post('http://127.0.0.1:5000/register', {
-             "student1": this.student1, "student2": this.student2, "reg_no": this.reg_no, "reg_no2": this.reg_no2, "email": this.email,
-             "email2": this.email2, "tel": this.tel, "tel2": this.tel2, "password": this.password_hash, "confirm_password": this.confirm,'course':this.course
-         })
+             "student1": this.student1,"reg_no":this.reg_no,"email": this.email,
+              "tel": this.tel,"password": this.password_hash,"confirm_password": this.confirm,
+              'course':this.course
+         }).then(response => {console.log(response)})
      }
   },
   metaInfo () {

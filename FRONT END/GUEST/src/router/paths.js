@@ -136,6 +136,14 @@ export default [
           requiresAuth: false
         },
         component: () => import(`@/components/DashViews/Rejected.vue`)
+      },
+      {
+        path: 'reviews',
+        meta: {
+          name: 'Review',
+          requiresAuth: false
+        },
+        component: () => import(`@/components/DashViews/Review.vue`)
       }
     ]
   }

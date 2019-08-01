@@ -1,8 +1,106 @@
 <template>
 <v-card class="rounded-card">
+
   <v-container
     
     grid-list-xl>
+     <h4  v-for="proposal in items" :key="proposal.reg_no2" class="orange--text">{{proposal.reg_no2}}</h4>
+    <v-layout justify-right>
+     
+     
+        <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn
+          color="primary"
+          dark
+          v-on="on"
+        >
+          Add Project Partner
+        </v-btn>
+      </template>
+
+      <v-card class="rounded-card">
+       
+
+        <v-card-text>
+           <v-container>
+           <h3 class="red--text" style="font-style:italic">Make sure your partner has registered on the system. Once your patner has confirmed, you will not be able to switch partners</h3>
+          </v-container>
+         
+            <v-text-field class="ma-3" label="Registration number1" placeholder="  reg_no" v-model="reg_no2"></v-text-field>
+         
+         
+          
+          
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="submit"
+          >
+            Submit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  
+ <v-spacer></v-spacer>
+    
+
+    <div class="mx-6 hidden-sm-and-down"></div>
+
+   <div class="text-right">
+    <v-menu left>
+      <template v-slot:activator="{ on: menu }">
+        <v-tooltip left>
+          <template v-slot:activator="{ on: tooltip }" >
+            <v-btn
+              color="primary"
+              
+              v-on="{ ...tooltip, ...menu }"
+            >Partner Requests</v-btn>
+          </template>
+          <span   >
+            <v-card >
+              <v-card-text  >
+                <h6>click button to approve or reject</h6>
+                <h6 class="green--text">Student-1</h6>
+              <p>{{request.reg_no}}</p>
+              <h6 class="green--text">Student-2</h6>
+               <p>{{request.reg_no2}}</p>
+               <h6 class="green--text">status </h6>
+               <p >{{request.status}}</p> 
+               
+                
+              
+
+              </v-card-text>
+
+              
+            </v-card>
+          </span>
+        </v-tooltip>
+      </template>
+      
+        <v-flex>
+          <v-btn small class="blue" @click="approve">accept</v-btn>
+       
+       <v-btn small class="red" @click="reject">reject</v-btn>
+
+        </v-flex>
+      
+    
+    </v-menu>
+  </div>
+  </v-layout>
+ 
+   
+
     <v-layout wrap>
      <v-flex
         md12
@@ -38,6 +136,7 @@
 </template>
 
 <script>
+import axios from "axios";
 import user from './UserProfile.vue'
 import table from './UsersTable.vue'
 import simple from './SimpleTables.vue'
@@ -51,151 +150,68 @@ export default {
   },
   data () {
     return {
-      dailySalesChart: {
-        data: {
-          labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-          series: [
-            [12, 17, 7, 17, 23, 18, 38]
-          ]
-        },
-        options: {
-          lineSmooth: this.$chartist.Interpolation.cardinal({
-            tension: 0
-          }),
-          low: 0,
-          high: 50, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-          chartPadding: {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-          }
-        }
-      },
-      dataCompletedTasksChart: {
-        data: {
-          labels: ['12am', '3pm', '6pm', '9pm', '12pm', '3am', '6am', '9am'],
-          series: [
-            [230, 750, 450, 300, 280, 240, 200, 190]
-          ]
-        },
-        options: {
-          lineSmooth: this.$chartist.Interpolation.cardinal({
-            tension: 0
-          }),
-          low: 0,
-          high: 1000, // creative tim: we recommend you to set the high sa the biggest value + something for a better look
-          chartPadding: {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0
-          }
-        }
-      },
-      emailsSubscriptionChart: {
-        data: {
-          labels: ['Ja', 'Fe', 'Ma', 'Ap', 'Mai', 'Ju', 'Jul', 'Au', 'Se', 'Oc', 'No', 'De'],
-          series: [
-            [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895]
+       dialog: false,
+        notifications: false,
+        sound: true,
+        widgets: false,
+        reg_no2:"",
+        reg_no:"",
+        items:[],
+        request:{},
+            itemz: [
+        { title: 'Click Me1' },
+        { title: 'Click Me2' },
+        { title: 'Click Me3' },
+        { title: 'Click Me4' },
+      ],
 
-          ]
-        },
-        options: {
-          axisX: {
-            showGrid: false
-          },
-          low: 0,
-          high: 1000,
-          chartPadding: {
-            top: 0,
-            right: 5,
-            bottom: 0,
-            left: 0
-          }
-        },
-        responsiveOptions: [
-          ['screen and (max-width: 768x)', {
-            seriesBarDistance: 5,
-            axisX: {
-              labelInterpolationFnc: function (value) {
-                return value[0]
-              }
-            }
-          }]
-        ]
-      },
-      headers: [
-        {
-          sortable: false,
-          text: 'ID',
-          value: 'id'
-        },
-        {
-          sortable: false,
-          text: 'Name',
-          value: 'name'
-        },
-        {
-          sortable: false,
-          text: 'Salary',
-          value: 'salary',
-          align: 'right'
-        },
-        {
-          sortable: false,
-          text: 'Country',
-          value: 'country',
-          align: 'right'
-        },
-        {
-          sortable: false,
-          text: 'City',
-          value: 'city',
-          align: 'right'
-        }
-      ],
-      items: [
-        {
-          name: 'Dakota Rice',
-          country: 'Niger',
-          city: 'Oud-Tunrhout',
-          salary: '$35,738'
-        },
-        {
-          name: 'Minerva Hooper',
-          country: 'Curaçao',
-          city: 'Sinaai-Waas',
-          salary: '$23,738'
-        }, {
-          name: 'Sage Rodriguez',
-          country: 'Netherlands',
-          city: 'Overland Park',
-          salary: '$56,142'
-        }, {
-          name: 'Philip Chanley',
-          country: 'Korea, South',
-          city: 'Gloucester',
-          salary: '$38,735'
-        }, {
-          name: 'Doris Greene',
-          country: 'Malawi',
-          city: 'Feldkirchen in Kārnten',
-          salary: '$63,542'
-        }
-      ],
-      tabs: 0,
-      list: {
-        0: false,
-        1: false,
-        2: false
-      }
+      
+ 
+     
+     
+     
+     
     }
   },
+  created(){
+    this.reg_no = localStorage.getItem('user')
+    axios.get("http://127.0.0.1:5000/viewpartner",{"reg_no": this.reg_no}).then(response => {
+                this.items= response.data })
+
+  },
+
+  mounted(){
+    this.reg_no = localStorage.getItem('user')
+    axios.post("http://127.0.0.1:5000/viewpartnerequest",{"reg_no": this.reg_no}).then(response =>{
+      this.request=response.data
+    })
+
+  },
+
   methods: {
-    complete (index) {
-      this.list[index] = !this.list[index]
-    }
+    submit(){
+      this.reg_no = localStorage.getItem('user')
+      axios.post("http://127.0.0.1:5000/addpartner",{"reg_no": this.reg_no,"reg_no2":this.reg_no2}).then(this.dialog=false)
+
+    },
+     approve() {
+        this.reg_no = localStorage.getItem('user')
+        axios.post("http://127.0.0.1:5000/confirmrequest",{"reg_no": this.reg_no,"response":"accept"}
+        ).then(response =>{
+          console.log(response);
+          window.location.reload()
+        })
+
+  },
+  reject() {
+        this.reg_no = localStorage.getItem('user')
+        axios.post("http://127.0.0.1:5000/confirmrequest",{"reg_no": this.reg_no,"response":"reject"}
+        ).then(response =>{
+          console.log(response);
+          window.location.reload()
+        })
+  },
+    
   }
 }
 </script>

@@ -1,9 +1,9 @@
 from project import app, db
 from flask_restful import Resource, Api
 from flask_restful import Api
-from project.users.views import Register,Login1,Logout1,ResetPassword,GetAllProjects,PostProposals,ViewPrjects,ViewProposals,PostProgressReport,Previous_topics_by_title,Previous_topics_by_year,UpdateMethodology,resubmitfiles,deleteproposal,deleteprogressreport
-from project.guest.views import pendingfiles2,Login2,Logout2,RegisterGuest,AssignedProposal,PostProject_,Reports,ProgressComment
-from project.admin.views import Login,Logout,progressfiles,ApproveProject,PostProject,PendingProposal,ProposalComment,ApprovedProposal,viewprojects,viewrejected,allstudents,allguest,allprogressreports1,progressreportquery,proposalbysupervisor,preprocessing,proposaltracker,approvedtracker,rejectedtracker,pendingtracker,pendingfiles,excelexport1,AllProposals
+from project.users.views import Register,viewpartnerequest,confirmreguest,addpartner,viewpartner,Login1,Logout1,ResetPassword,GetAllProjects,PostProposals,ViewPrjects,ViewProposals,PostProgressReport,Previous_topics_by_title,Previous_topics_by_year,UpdateMethodology,resubmitfiles,deleteproposal,deleteprogressreport
+from project.guest.views import pendingfiles2,Toreview,Tocomment,Login2,Logout2,RegisterGuest,AssignedProposal,PostProject_,Reports,ProgressComment
+from project.admin.views import Login,Review,Logout,progressfiles,ApproveProject,PostProject,PendingProposal,ProposalComment,ApprovedProposal,viewprojects,viewrejected,allstudents,allguest,allprogressreports1,progressreportquery,proposalbysupervisor,preprocessing,proposaltracker,approvedtracker,rejectedtracker,pendingtracker,pendingfiles,excelexport1,AllProposals
 
 api = Api(app)
 
@@ -24,12 +24,14 @@ api.add_resource(UpdateMethodology, '/UpdateMethodology')
 api.add_resource(resubmitfiles, '/resubmitfiles')
 api.add_resource(deleteproposal, '/deleteproposal')
 api.add_resource(deleteprogressreport, '/deleteprogressreport')
-
+api.add_resource(viewpartnerequest, '/viewpartnerequest')
+api.add_resource(confirmreguest, '/confirmrequest')
 ##
 api.add_resource(Login, '/login-admin')
 api.add_resource(Logout, '/logout-user')
 api.add_resource(ApproveProject, '/approve')
 api.add_resource(PostProject, '/postproject')
+api.add_resource(Review, '/review')
 api.add_resource(PostProject, '/postproject/del/<string:title>', endpoint='postproject-del')
 api.add_resource(PendingProposal, '/pendingproposal')
 api.add_resource(ProposalComment, '/proposalcomment')
@@ -52,6 +54,8 @@ api.add_resource(approvedtracker, '/approvedtracker')
 api.add_resource(rejectedtracker, '/rejectedtracker')
 api.add_resource(pendingtracker, '/pendingtracker')
 api.add_resource(progressfiles, '/progressfiles')
+api.add_resource(addpartner, '/addpartner')
+api.add_resource(viewpartner, '/viewpartner')
 ##
 api.add_resource(Login2, '/login-guest')
 api.add_resource(Logout2, '/logout-guest')
@@ -62,6 +66,8 @@ api.add_resource(PostProject_, '/pro/delete/<string:title>',endpoint='project-de
 api.add_resource(ProgressComment, '/progresscomment')
 api.add_resource(Reports, '/reports')
 api.add_resource(pendingfiles2, '/pendingfiles2')
+api.add_resource(Toreview, '/toreview')
+api.add_resource(Tocomment, '/tocomment')
 if __name__ == '__main__':
     app.run(debug=True)
 

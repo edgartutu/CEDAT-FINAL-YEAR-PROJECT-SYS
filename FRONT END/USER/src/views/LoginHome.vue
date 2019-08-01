@@ -13,7 +13,7 @@
       <router-view/>
     </transition>
     <v-spacer></v-spacer>
-    <h2 class="teal--text">FINAL YR PROJECTS PLATFORM </h2>
+    <h2 class="teal--text">FINAL YEAR PROJECTS PLATFORM </h2>
   </v-container>
   </v-app>
  

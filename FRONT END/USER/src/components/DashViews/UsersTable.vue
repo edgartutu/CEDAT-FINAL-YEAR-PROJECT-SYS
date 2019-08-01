@@ -3,8 +3,10 @@
 	
 		<v-container >
 			<v-card class="rounded-card">
+                
                 <v-card-text>
-                    
+                    <h4 class="red--text">***Make sure your partner has confirmed your request before submiting.*** </h4>
+                    <h4 class="red--text">***Only ignore if you have no project partner.***</h4>  
                     <v-text-field label="Project Reference Number" placeholder="Project Reference Number" v-model="project_ref"></v-text-field>
                     <v-text-field label="Title" placeholder="Title" v-model="title"></v-text-field>
                     <v-text-field label="Problem Statment" placeholder="Problem Statment" v-model="problem_statment"></v-text-field>
@@ -49,7 +51,7 @@ import axios from 'axios'
                 fd.append('reg_nox',this.reg_nox)
 
                 axios.post("http://127.0.0.1:5000/postproposals", fd).then(response => {
-                    console.log(response)
+                    console.log(response) ;
                     window.location.reload()
                 })
                 

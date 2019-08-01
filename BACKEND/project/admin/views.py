@@ -1,11 +1,11 @@
 from project import app, db
-from project.models import User, Admin, Proposal, Department,Project,Rejected_Proposal,Guest,Progress_report,ExportApproved
+from project.models import User, Admin, Proposal, Department,Project,Rejected_Proposal,Guest,Progress_report,ExportApproved,Partner_table
 from flask_restful import Resource, Api
 from flask import flash, redirect, render_template, request, url_for,make_response
 from flask_login import login_user,login_required, logout_user
 from .forms import LoginForm,ProposalForm,ProjectForm,Proposal_comment_Form
 import functools
-from project import db, login_manager
+from project import db, login_manager,mail
 from werkzeug.utils import secure_filename
 import os
 import datetime
@@ -22,6 +22,7 @@ import flask_excel as excel
 import pyexcel
 import uuid
 import time
+from flask_mail import Message
 
 
 api = Api(app)
@@ -97,8 +98,32 @@ class ApproveProject(Resource):
     
     def post(current_user):
         data = request.get_json()
+        
         student = Proposal.query.filter_by(reg_no=data["reg_no"]).first()
         user = User.query.filter_by(reg_no=data["reg_no"]).first()
+        try:
+            if Partner_table.query.filter_by(reg_no=data["reg_no"]).first() != None:
+                partner = Partner_table.query.filter_by(reg_no=data["reg_no"]).first()
+                if partner.reg_no == data["reg_no"]:
+                    reg_no2 = partner.reg_no2
+                else:
+                    reg_no2 = partner.reg_no
+
+            else:
+                
+                partner = Partner_table.query.filter_by(reg_no2=data["reg_no"]).first()
+                
+                if partner.reg_no2 == data["reg_no"]:
+                    reg_no2 = partner.reg_no
+                else:
+                    reg_no2 = partner.reg_no2
+                
+            user2 = User.query.filter_by(reg_no=reg_no2).first()
+            email2 = user2.email
+
+        except Exception:
+            reg_no2 = ''
+            email2 = ''
         
         if student is not None:
 ##            Proposal.json(self)
@@ -117,8 +142,34 @@ class ApproveProject(Resource):
                 student.supervisor = data["supervisor"]
                 student.email = data["email"]
                 student.comment = data["comment"]
+                student.cosupervisor = data["cosupervisor"]
+                student.extsupervisor = data["extsupervisor"]
                 db.session.commit()
-                return data
+                try:
+    
+                    message = 'Congrats your project proposal has been approved'
+                    subject = 'Proposal Status: NO REPLY'
+                    sender = 'fypmailing@gmail.com'
+                    msg = Message(sender=sender,recipients=[user.email],body=message,subject=subject)
+                    msg2 = Message(sender=sender,recipients=[email2],body=message,subject=subject)
+
+                    mail.send(msg)
+                    mail.send(msg2)
+
+                except Exception:
+                    return {'error':'mail not sent'}
+                try:
+    
+                    message = 'You have been assigned the proposal. '+str(student.student1)+'\n'+str(student.student2)+'\n'+str(student.title)
+                    subject = 'Proposal Assignment: NO REPLY'
+                    sender = 'fypmailing@gmail.com'
+                    msg = Message(sender=sender,recipients=[data['email']],body=message,subject=subject)
+
+                    mail.send(msg)
+
+                except Exception:
+                    return {'error':'mail not sent'}
+               
 
             elif status == 'Rejected':
                 rejected = Proposal.query.filter_by(reg_no=data['reg_no']).first()
@@ -134,6 +185,8 @@ class ApproveProject(Resource):
                 student2 = rejected.student2
                 status = 'Rejected'
                 supervisor = 'None'
+                cosupervisor = 'None'
+                extsupervisor = 'None'
                 email = 'None'
                 comment = data['comment']
                 insert = Rejected_Proposal(title=title,reg_no=reg_no,reg_no2=reg_no2,problem_statement=problem_statment,
@@ -143,15 +196,27 @@ class ApproveProject(Resource):
                 db.session.add(insert)
                 db.session.delete(rejected)
                 db.session.commit()
+
+                try:
+    
+                    message = 'Your proposal has been rejected. \n'+str(data['comment'])
+                    subject = 'Proposal Status: NO REPLY'
+                    sender = 'fypmailing@gmail.com'
+                    msg = Message(sender=sender,recipients=[user.email],body=message,subject=subject)
+                    mail.send(msg)
+                    msg2 = Message(sender=sender,recipients=[user2.email],body=message,subject=subject)
+                    mail.send(msg2)
+
+                except Exception:
+                    return {'error':'mail not sent'}
+                
                 
             else:
-##                flash('Error: Not successful')
                 make_response('Could not verify7',401,{'www-Authenticate':'Basic realm-"login required!"'})
-##                return student
+
         else:
             make_response('Could not verify2',401,{'www-Authenticate':'Basic realm-"login required!"'})
-##            flash('Students proposal doesnt exist')
-##        return make_response(render_template('approveproject.html',form=form))
+
          
 class PostProject(Resource):
 #    @token_required
@@ -372,4 +437,33 @@ class AllProposals(Resource):
     def get(current_user):
         students = Proposal.query.all()
         return [x.json() for x in students]
+
+class Review(Resource):
+    
+    def post(current_user):
+        data=request.get_json()
+        view=Proposal.query.filter_by(reg_no=data['reg_no']).first()
+        view.review_supervisor=data['review_email']
+        view.review_comment=data['comment']
+        db.session.commit()
+
+        try:
+        
+            message = 'Proposal Submitted by '+ str(data['reg_no'])+' has been assigned to you for review by the Administator. Please log in to the final year system to view it'
+            subject = 'Proposal To Review: NO REPLY'
+            sender = 'fypmailing@gmail.com'
+            msg = Message(sender=sender,recipients=[data['review_email']],body=message,subject=subject)
+##            with app.open_resource(os.path.join(app.config['UPLOAD_FOLDER'],newFilename)) as fp:
+##                msg.attach(fp,fp.read())
+            mail.send(msg)
+
+        except Exception:
+            return {'error':'mail not sent'}
+
+
+    
+
+        
+        
+    
 

@@ -43,6 +43,9 @@
                 <td >{{ item.problem_statement }}</td>
                 <td >{{ item.methodology }}</td>
                 <td>{{ item.proposal_uploadfile }}</td>
+                 <td>{{ item.supervisor }}</td>
+                 <td>{{ item.cosupervisor }}</td>
+                 <td>{{ item.extsupervisor }}</td>
                 <td>{{ item.status }}</td>
                 <v-btn class="flat green" @click="download(index)">Download</v-btn>
             </template>
@@ -93,6 +96,21 @@ export default {
         sortable: false,
         text: 'File',
         value: 'file',
+      },
+      {
+        sortable: false,
+        text: 'Main Supervisor',
+        value: 'supervisor',
+      },
+      {
+        sortable: false,
+        text: 'Co Supervisor',
+        value: 'cosupervisor',
+      },
+       {
+        sortable: false,
+        text: 'Field Supervisor',
+        value: 'extsupervisor',
       },
       {
         sortable: false,
