@@ -224,9 +224,10 @@ class PostProposals(Resource):
                     subject = 'Proposal Submitted: NO REPLY'
                     sender = 'fypmailing@gmail.com'
                     msg = Message(sender=sender,recipients=[mes.email],body=message,subject=subject)
-        ##            with app.open_resource(os.path.join(app.config['UPLOAD_FOLDER'],newFilename)) as fp:
-        ##                msg.attach(fp,fp.read())
-                    mail.send(msg)
+                    
+                    with app.open_resource(str(os.path.join(app.config['UPLOAD_FOLDER'],newFilename))) as fp:
+                        msg.attach(newFilename,"file/pdf",fp.read())
+                        mail.send(msg)
 
             except Exception:
                 return {'error':'mail not sent'}

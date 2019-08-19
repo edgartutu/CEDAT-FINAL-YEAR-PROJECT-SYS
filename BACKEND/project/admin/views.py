@@ -101,6 +101,8 @@ class ApproveProject(Resource):
         
         student = Proposal.query.filter_by(reg_no=data["reg_no"]).first()
         user = User.query.filter_by(reg_no=data["reg_no"]).first()
+        name_= student.proposal_uploadfile
+        file_=send_from_directory(app.config['UPLOAD_FOLDER'],name_)
         try:
             if Partner_table.query.filter_by(reg_no=data["reg_no"]).first() != None:
                 partner = Partner_table.query.filter_by(reg_no=data["reg_no"]).first()
@@ -164,7 +166,6 @@ class ApproveProject(Resource):
                     subject = 'Proposal Assignment: NO REPLY'
                     sender = 'fypmailing@gmail.com'
                     msg = Message(sender=sender,recipients=[data['email']],body=message,subject=subject)
-
                     mail.send(msg)
 
                 except Exception:
