@@ -8,8 +8,7 @@
       
     <v-layout wrap>
        <v-flex
-        md12
-        lg12
+        xs12 md12
       >
      
         <material-card
@@ -22,7 +21,7 @@
 
         </material-card>
       </v-flex>
-      <v-flex align-self: center
+      <v-flex align-self: center  xs12 md12
       >
        
            <note/>
@@ -30,8 +29,7 @@
       
       <v-spacer></v-spacer>
      <v-flex
-       md4
-        lg6
+       xs12 md6
       >
         <material-card  class="rounded-card"
           color="deep-orange darken-1"
@@ -46,8 +44,7 @@
         </material-card>
       </v-flex>
       <v-flex
-        md4
-        lg6
+        xs12 md6
       >
         <material-card
           title="Approved Projects"
