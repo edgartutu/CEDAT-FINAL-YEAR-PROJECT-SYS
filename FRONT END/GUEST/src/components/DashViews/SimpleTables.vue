@@ -18,7 +18,7 @@
           <v-btn
             color="green darken-3"
             dark
-            class="mb-2" >Excell</v-btn>
+            class="mb-2" >Excel</v-btn>
           <v-data-table
             :headers="headers"
             :items="items"

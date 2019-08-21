@@ -16,7 +16,7 @@
         <router-view />
       </v-fade-transition>
 
-      <core-footer v-if="$route.name !== 'Maps'" />
+      
       </v-card>
 
     </v-app>

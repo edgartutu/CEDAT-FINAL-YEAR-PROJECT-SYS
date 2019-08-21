@@ -9,8 +9,8 @@
                     <h4 class="red--text">***Only ignore if you have no project partner.***</h4>  
                     <v-text-field label="Project Reference Number" placeholder="Project Reference Number" v-model="project_ref"></v-text-field>
                     <v-text-field label="Title" placeholder="Title" v-model="title"></v-text-field>
-                    <v-text-field label="Problem Statment" placeholder="Problem Statment" v-model="problem_statment"></v-text-field>
-                    <v-text-field label="Methodology" placeholder="Methodology" v-model="methodology"></v-text-field>
+                    <v-text-field multi-line="true" label="Problem Statment" placeholder="Problem Statment" v-model="problem_statment"></v-text-field>
+                    <v-text-field multi-line="true" label="Methodology" placeholder="Methodology" v-model="methodology"></v-text-field>
                     <input type="file" name="Upload File" accept=".pdf" @change="uploadfile" />
                     <v-btn flat class="green my-5" @click="postproposal()">Submit</v-btn>
 

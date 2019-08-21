@@ -24,7 +24,7 @@
                     <div>{{proposal.status}}</div>
                      <h4 class="font-weight-bold">Comment</h4>
                      <div>{{proposal.review_comment}}</div>
-                    <v-text-field label="Observations"  v-model="comment"></v-text-field>
+                    <v-text-field label="Observations" multi-line="true"  v-model="comment"></v-text-field>
                     <v-btn class="teal" @click="submit(index)">submit</v-btn><v-spacer></v-spacer>
                    
                   </v-card-text>

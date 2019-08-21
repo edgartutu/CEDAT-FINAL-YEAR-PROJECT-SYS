@@ -46,7 +46,7 @@
                     </v-layout>
                     <p></p>
                      <v-layout wrap>
-                        <v-text-field 
+                        <v-text-field multi-line="true"
                           label="Coment"  v-model="comments"/>
 
                     </v-layout>

@@ -36,9 +36,7 @@
              <td>{{ item.reg_no }}</td>
               <td>{{ item.student1 }}</td>
               <td>{{ item.email }}</td>
-               <td>{{ item.reg_no2 }}</td>
-                <td>{{ item.student2 }}</td>
-                 <td>{{ item.email2 }}</td>
+              
               
             </template>
           </v-data-table>
@@ -104,24 +102,6 @@ export default {
         sortable: false,
         text: 'Contact',
         value: 'contact1'
-      },
-      {
-        sortable: false,
-        text: 'Reg_no1',
-        value: 'reg_no1',
-        
-      },
-      {
-        sortable: false,
-        text: 'Student2',
-        value: 'student2',
-       
-      },
-      {
-        sortable: false,
-        text: 'Contact2',
-        value: 'contact2',
-       
       },
       
     ],

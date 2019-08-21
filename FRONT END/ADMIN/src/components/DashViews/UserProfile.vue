@@ -78,7 +78,9 @@
                           </template>
                         </template>
                       </v-autocomplete>
-                             <v-text-field label="Comment" placeholder="comment" v-model="review_comment"></v-text-field>
+                           
+                          <v-text-field multi-line="true" label="Comment" placeholder="comment" v-model="review_comment"></v-text-field>
+                           
                           </v-card-text>
 
                           <v-divider></v-divider>
@@ -224,7 +226,7 @@
                       </v-autocomplete>
 
                   
-                    <v-text-field label="Comment" placeholder="Comment" v-model="comment"></v-text-field>
+                    <v-text-field multi-line="true" label="Comment" placeholder="Comment" v-model="comment"></v-text-field>
                     <v-btn class="green" @click="approve(index)">Approve</v-btn><v-spacer></v-spacer>
                     <v-btn class="red" @click="rejected(index)">Reject</v-btn>
                 </v-card-text>

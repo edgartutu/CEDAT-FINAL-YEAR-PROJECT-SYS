@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\GUEST",
+    "\\GUEST\\src",
+    "\\GUEST\\src\\components",
+    "\\GUEST\\src\\components\\DashViews",
+    "\\GUEST\\src\\router",
+    "\\USER\\src",
+    "\\USER\\src\\components",
+    "\\USER\\src\\components\\core",
+    "\\USER\\src\\views"
+  ],
+  "SelectedNode": "\\GUEST\\src\\components\\DashViews\\Review.vue",
+  "PreviewInSolutionExplorer": false
+}

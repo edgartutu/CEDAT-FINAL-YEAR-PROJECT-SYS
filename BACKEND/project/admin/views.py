@@ -167,9 +167,48 @@ class ApproveProject(Resource):
                     sender = 'fypmailing@gmail.com'
                     msg = Message(sender=sender,recipients=[data['email']],body=message,subject=subject)
                     mail.send(msg)
+                    try:
+                        msg2 = Message(sender=sender,recipients=[data['cosupervisor']],body=message,subject=subject)
+                        mail.send(msg2)
+
+                    except Exception:
+                        return {'error':'main not sent'}
 
                 except Exception:
                     return {'error':'mail not sent'}
+
+                # Auto Reject Function
+                try:
+                    ref = student.project_ref
+                    status = 'pending'
+                    reject = Proposal.query.filter_by(project_ref=ref,status=status)
+                    for x in reject:
+                        
+                        title = x.json['title']
+                        reg_no = x.json['reg_no']
+                        reg_no2 = x.json['reg_no2']
+                        problem_statment = x.json['problem_statement']
+                        methodology = x.json['methodology']
+                        proposal_uploadfile = x.json['proposal_uploadfile']
+                        student1 = x.json['student1']
+                        student2 = x.json['student2']
+                        status = 'Rejected'
+                        supervisor = 'None'
+                        cosupervisor = 'None'
+                        extsupervisor = 'None'
+                        email = 'None'
+                        comment = 'The Project Has Been Taken'
+                        insert = Rejected_Proposal(title=title,reg_no=reg_no,reg_no2=reg_no2,problem_statement=problem_statment,
+                                                   methodology=methodology,proposal_uploadfile=proposal_uploadfile,
+                                                   student1=student1,student2=student2,status=status,
+                                                   supervisor=supervisor,email=email,comment=comment)
+                        db.session.add(insert)
+                        db.session.commit()
+                    db.session.delete(reject)
+                    db.session.commit()
+
+                except Exception:
+                    pass
                
 
             elif status == 'Rejected':

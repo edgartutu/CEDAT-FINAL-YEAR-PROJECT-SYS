@@ -44,6 +44,7 @@
                     <p></p>
                      <v-layout wrap>
                         <v-text-field
+                           multi-line="true"
                           v-model="editedItem.email"
                           label="Coment" />
 
